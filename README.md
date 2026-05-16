@@ -36,10 +36,32 @@ checkpoint, set the path explicitly before running:
 export ESMC_600M_WEIGHTS=/path/to/esmc_600m_2024_12_v0.pth
 ```
 
-RiNALMo weights should be placed at:
+Download released weights from Hugging Face:
+
+```bash
+hf download bowen12355/HARP-RPA --local-dir weights
+```
+
+If the Hugging Face repository is private, log in first:
+
+```bash
+hf auth login
+```
+
+The downloaded files should follow this layout:
 
 ```text
 weights/rinalmo_giga_pretrained.pt
+weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold0.ckpt
+weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold1.ckpt
+weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold2.ckpt
+weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold3.ckpt
+weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold4.ckpt
+weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold0.ckpt
+weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold1.ckpt
+weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold2.ckpt
+weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold3.ckpt
+weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold4.ckpt
 ```
 
 Model checkpoints and pretrained weights are not tracked by git. The `weights`

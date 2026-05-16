@@ -3,11 +3,11 @@ gpus:
   - 0
 
 ckpts: 
-  - ./weights/HARP-RPA_5fold/HARP-RPA_fold0.ckpt
-  - ./weights/HARP-RPA_5fold/HARP-RPA_fold1.ckpt
-  - ./weights/HARP-RPA_5fold/HARP-RPA_fold2.ckpt
-  - ./weights/HARP-RPA_5fold/HARP-RPA_fold3.ckpt
-  - ./weights/HARP-RPA_5fold/HARP-RPA_fold4.ckpt
+  - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold0.ckpt
+  - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold1.ckpt
+  - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold2.ckpt
+  - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold3.ckpt
+  - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold4.ckpt
 
 run_name: 'harp_rpa_test_best'
 wandb: False

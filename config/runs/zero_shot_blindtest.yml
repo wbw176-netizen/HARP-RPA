@@ -5,7 +5,7 @@ output_dir: './outputs/harp_rpa/mCSM/zero_shot_blind_test'
 gpus:
   - 0
 ckpts: 
-  - './weights/HARP-RPA_fold0.ckpt'
+  - './weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold0.ckpt'
 
 run_name: 'harp_rpa_mCSM_blind_test'
 wandb: False
