@@ -1,0 +1,12 @@
+iters: 0
+epochs: 0
+patience: 1
+output_dir: './outputs/harp_rpa/mCSM/zero_shot_blind_test'
+gpus:
+  - 0
+ckpts: 
+  - './weights/HARP-RPA_fold0.ckpt'
+
+run_name: 'harp_rpa_mCSM_blind_test'
+wandb: False
+num_folds: 1

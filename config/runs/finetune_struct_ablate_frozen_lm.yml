@@ -1,0 +1,13 @@
+epochs: 80
+accumulate_grad_batches: 8
+patience: 5
+output_dir: './outputs/finetune_ablation/PRA310/frozen_lm'
+gpus:
+  - 0
+
+ckpt: null
+
+run_name: 'ablate_ft_frozen_lm_patch256'
+wandb: False
+num_folds: 5
+monitor_metric: val_composite

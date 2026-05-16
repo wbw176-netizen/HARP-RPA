@@ -1,0 +1,23 @@
+dataset_type: 'structure_dataset'
+df_path: './datasets/mCSM_RNA/splits/crossvalidation.csv'
+batch_size: 8
+data_root: './datasets/mCSM_RNA/PDBs'
+num_workers: 2
+col_prot_chain: 'Protein chains'
+col_na_chain: 'RNA chains'
+col_prot: 'Protein sequences'
+col_mut: 'Mutation sequences'
+mut: True
+col_na: 'RNA sequences'
+col_label: 'DDG'
+pin_memory: True
+cache_dir: './cache/mmCSM'
+loss_type: regression
+strategy: separate
+
+transform:
+  - type: select_atom
+    resolution: backbone
+  - type: selected_region_with_distmap
+    patch_size: 256
+  - type: subtract_center_of_mass

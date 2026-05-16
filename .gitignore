@@ -1,0 +1,45 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Logs and experiment outputs
+outputs/
+cache/
+wandb/
+lightning_logs/
+logs/
+*.log
+
+# Model weights and large artifacts
+weights/*
+!weights/README.md
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.tgz
+*.tar
+*.tar.gz
+*.zip
+
+# Local/generated assets
+hatch_pet_runs/
+label standarized file/
+model robust experience/
+pl_modules/model_module_diff.py
+pl_modules/model_module_orig.py
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

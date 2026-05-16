@@ -1,0 +1,12 @@
+epochs: 100
+patience: 5
+output_dir: './outputs/esmc_rinalmo_seq/PRA310'
+gpus:
+  - 0
+
+ckpt: null
+
+run_name: 'esmc_rinalmo_seq_patch256'
+wandb: false
+num_folds: 5
+monitor_metric: val_composite

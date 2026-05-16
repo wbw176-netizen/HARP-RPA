@@ -1,0 +1,21 @@
+dataset_type: 'structure_dataset'
+df_path: './datasets/PRA310/splits/PRA201.csv'
+batch_size: 2
+data_root: './datasets/PRA310/PDBs'
+num_workers: 2
+col_prot_chain: 'Protein chains'
+col_na_chain: 'RNA chains'
+col_prot: 'Protein sequences'
+col_na: 'RNA sequences'
+col_label: '△G(kcal/mol)'
+pin_memory: True
+cache_dir: './cache/pra201'
+loss_type: regression
+strategy: separate
+
+transform:
+  - type: select_atom
+    resolution: backbone
+  - type: selected_region_with_distmap
+    patch_size: 256
+  - type: subtract_center_of_mass

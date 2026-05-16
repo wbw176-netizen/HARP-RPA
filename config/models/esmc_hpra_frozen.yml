@@ -1,0 +1,69 @@
+resume: null
+
+model:
+  model_type: harp_rpa
+  pair_encoder_type: hetero_pair
+  coformer_type: hetero_pairformer
+
+  esm_type: 'esmc-600m'
+  pooling: token
+  output_dim: 1
+
+  # Frozen-LM setting: keep sequence LMs fixed and train the structure/fusion trunk.
+# pooling: token
+# pooling: interface
+# pooling: token_interface   pooling methods for binding infinity
+    
+    
+  interface_cross_relation_id: 4
+  interface_dist_tau: 8.0
+
+  fix_lms: true
+  lora_tune: false
+  lora_rank: 16
+  lora_alpha: 32
+  break_point: 30
+  fusion_layer: null
+
+  rinalmo_lora_tune: false
+  rinalmo_lora_rank: 8
+  rinalmo_lora_alpha: 16
+  rinalmo_full_ft_last_k: 0
+  rinalmo_train_ffn: false
+  rinalmo_freeze: true
+
+  pair_dim: 64
+  pair_max_num_atoms: 4
+
+  coformer:
+    embed_dim: 320
+    pair_dim: 64
+    num_blocks: 6
+    num_heads: 20
+    num_relations: 8
+    use_rot_emb: true
+    attn_qkv_bias: false
+    attention_dropout: 0.1
+    transition_dropout: 0.0
+    residual_dropout: 0.1
+    transition_factor: 4
+    use_flash_attn: false
+
+train:
+  temperature: 0.2
+  max_iters: 30_000
+  val_freq: 1000
+  seed: 1337
+  max_grad_norm: 20.0
+  optimizer:
+    type: adam
+    lr: 1.e-5
+    trunk_lr: 5.e-5
+    weight_decay: 1.e-5
+    beta1: 0.9
+    beta2: 0.999
+  scheduler:
+    type: plateau
+    factor: 0.8
+    patience: 10
+    min_lr: 1.e-6

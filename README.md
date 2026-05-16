@@ -1,0 +1,208 @@
+# HARP-RPA
+
+HARP-RPA is a protein-RNA binding affinity prediction framework built around heterogeneous residue-pair modeling. It combines pretrained protein and RNA sequence encoders with explicit protein/RNA/interface pair construction, a relation-aware HeteroPairFormer backbone, and an interface-aware readout for complex-level binding free-energy prediction.
+
+The current main model configuration is:
+
+```yaml
+./config/models/esmc_hpra_scratch_token_interface_labelstd.yml
+```
+
+It uses:
+
+- ESMC-600M as the protein encoder.
+- RiNALMo as the RNA encoder.
+- Heterogeneous token assembly with complex, protein, and RNA special tokens.
+- Heterogeneous residue-pair construction for P-P, R-R, P-R, and special-token pair relations.
+- HeteroPairFormer for joint single-token and pair-representation updates.
+- `token_interface` pooling, combining the complex token with an interface-aware P-R pair readout.
+- Label standardization during affinity training.
+- Dual-depth fine-tuning: shallow LoRA and upper-layer fine-tuning for language-model adaptation.
+
+## Installation
+
+Create the recommended conda environment:
+
+```bash
+conda env create -f environment.yml
+conda activate harp_rpa
+```
+
+HARP-RPA uses ESMC as the default protein encoder. The code first tries to load
+ESMC from the EvolutionaryScale pretrained registry. If you use a local ESMC
+checkpoint, set the path explicitly before running:
+
+```bash
+export ESMC_600M_WEIGHTS=/path/to/esmc_600m_2024_12_v0.pth
+```
+
+RiNALMo weights should be placed at:
+
+```text
+weights/rinalmo_giga_pretrained.pt
+```
+
+Model checkpoints and pretrained weights are not tracked by git. The `weights`
+directory contains only a README placeholder in the repository.
+
+## Model Type
+
+All HARP-RPA model configs use:
+
+```yaml
+model:
+  model_type: harp_rpa
+```
+
+The model registry is defined in `models/model.py` through:
+
+```python
+@R.register("harp_rpa")
+```
+
+Use the current HARP-RPA configs listed below.
+
+## Key Configurations
+
+Available model configs:
+
+```text
+config/models/esmc_hpra_scratch_token_interface_labelstd.yml
+config/models/esmc_hpra_frozen.yml
+config/models/esmc_rinalmo_seq.yml
+config/models/ablate_ft_ddft.yml
+config/models/ablate_ft_ddft_large.yml
+config/models/ablate_ft_frozen_lm.yml
+config/models/ablate_ft_lora_only.yml
+```
+
+Recommended main affinity model:
+
+```bash
+--model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml
+```
+
+Sequence-only language-model baseline:
+
+```bash
+--model_config ./config/models/esmc_rinalmo_seq.yml
+```
+
+Fine-tuning ablations:
+
+```text
+ablate_ft_frozen_lm.yml    frozen language models
+ablate_ft_lora_only.yml    LoRA-only adaptation
+ablate_ft_ddft.yml         dual-depth fine-tuning
+ablate_ft_ddft_large.yml   stronger top-layer fine-tuning
+```
+
+## Datasets
+
+Expected dataset configs:
+
+```text
+config/datasets/PRA310.yml
+config/datasets/PRA201.yml
+config/datasets/mCSM.yml
+config/datasets/blindtest.yml
+```
+
+PRA310 and PRA201 are used for supervised binding affinity prediction. The target is binding free energy `dG`. Mutation-effect experiments use mCSM-style `ddG` data when available.
+
+Dataset files and structures should be placed under `./datasets` according to the paths in each dataset YAML file.
+
+## Training
+
+Run HARP-RPA on PRA310:
+
+```bash
+python run.py \
+  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --data_config ./config/datasets/PRA310.yml \
+  --run_config ./config/runs/finetune_struct.yml \
+  finetune dG
+```
+
+Run HARP-RPA on PRA201:
+
+```bash
+python run.py \
+  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --data_config ./config/datasets/PRA201.yml \
+  --run_config ./config/runs/finetune_struct.yml \
+  finetune dG
+```
+
+Run a sequence-only baseline:
+
+```bash
+python run.py \
+  --model_config ./config/models/esmc_rinalmo_seq.yml \
+  --data_config ./config/datasets/PRA310.yml \
+  --run_config ./config/runs/finetune_struct.yml \
+  finetune dG
+```
+
+## Testing
+
+Evaluate a trained checkpoint on an affinity dataset:
+
+```bash
+python run.py \
+  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --data_config ./config/datasets/PRA310.yml \
+  --run_config ./config/runs/test_basic.yml \
+  test dG
+```
+
+For mutation-effect evaluation:
+
+```bash
+python run.py \
+  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --data_config ./config/datasets/mCSM.yml \
+  --run_config ./config/runs/zero_shot_blindtest.yml \
+  test ddG
+```
+
+## Training Notes
+
+- The first epoch can be slower because structure features are cached.
+- Main experiments should keep `pooling: token_interface`.
+- Main and ablation experiments should use the same split, seed, optimizer, scheduler, and gradient clipping settings.
+- Recommended gradient clipping for the current model is `max_grad_norm: 10.0`.
+- If using ESMC, keep `esm_type: 'esmc-600m'`. Legacy ESM-2 branches are kept for compatibility with older experiments, but the paper model uses ESMC.
+
+## Main Architecture
+
+HARP-RPA follows this pipeline:
+
+1. Encode protein and RNA sequences with ESMC and RiNALMo.
+2. Assemble protein, RNA, and complex-level tokens.
+3. Construct heterogeneous residue/base pair features from residue identity, relative index, chain assignment, coordinates, molecule type, valid atoms, and relation IDs.
+4. Update token and pair representations with HeteroPairFormer.
+5. Predict binding free energy with an interface-aware readout.
+
+The relation IDs used by the heterogeneous pair encoder are:
+
+```text
+0: P-P same-chain
+1: P-P inter-chain
+2: R-R same-chain
+3: R-R inter-chain
+4: P-R cross-pair
+5: complex-token relation
+6: protein-token relation
+7: RNA-token relation
+```
+
+## Output
+
+Training outputs are written to the directory specified by the run config, for example:
+
+```yaml
+output_dir: ./outputs/esmc_rinalmo_ddft/...
+```
+
+Each fold writes logs, checkpoints, predictions, and metric CSV files under its corresponding output subdirectory.
