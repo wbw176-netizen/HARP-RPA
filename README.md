@@ -1,11 +1,11 @@
-# HARP-RPA
+﻿# HARP-RPA
 
 HARP-RPA is a protein-RNA binding affinity prediction framework built around heterogeneous residue-pair modeling. It combines pretrained protein and RNA sequence encoders with explicit protein/RNA/interface pair construction, a relation-aware HeteroPairFormer backbone, and an interface-aware readout for complex-level binding free-energy prediction.
 
 The current main model configuration is:
 
 ```yaml
-./config/models/esmc_hpra_scratch_token_interface_labelstd.yml
+./config/models/harp_rpa.yml
 ```
 
 It uses:
@@ -67,7 +67,7 @@ Use the current HARP-RPA configs listed below.
 Available model configs:
 
 ```text
-config/models/esmc_hpra_scratch_token_interface_labelstd.yml
+config/models/harp_rpa.yml
 config/models/esmc_hpra_frozen.yml
 config/models/esmc_rinalmo_seq.yml
 config/models/ablate_ft_ddft.yml
@@ -79,7 +79,7 @@ config/models/ablate_ft_lora_only.yml
 Recommended main affinity model:
 
 ```bash
---model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml
+--model_config ./config/models/harp_rpa.yml
 ```
 
 Sequence-only language-model baseline:
@@ -118,7 +118,7 @@ Run HARP-RPA on PRA310:
 
 ```bash
 python run.py \
-  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --model_config ./config/models/harp_rpa.yml \
   --data_config ./config/datasets/PRA310.yml \
   --run_config ./config/runs/finetune_struct.yml \
   finetune dG
@@ -128,7 +128,7 @@ Run HARP-RPA on PRA201:
 
 ```bash
 python run.py \
-  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --model_config ./config/models/harp_rpa.yml \
   --data_config ./config/datasets/PRA201.yml \
   --run_config ./config/runs/finetune_struct.yml \
   finetune dG
@@ -150,7 +150,7 @@ Evaluate a trained checkpoint on an affinity dataset:
 
 ```bash
 python run.py \
-  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --model_config ./config/models/harp_rpa.yml \
   --data_config ./config/datasets/PRA310.yml \
   --run_config ./config/runs/test_basic.yml \
   test dG
@@ -160,7 +160,7 @@ For mutation-effect evaluation:
 
 ```bash
 python run.py \
-  --model_config ./config/models/esmc_hpra_scratch_token_interface_labelstd.yml \
+  --model_config ./config/models/harp_rpa.yml \
   --data_config ./config/datasets/mCSM.yml \
   --run_config ./config/runs/zero_shot_blindtest.yml \
   test ddG
@@ -206,3 +206,4 @@ output_dir: ./outputs/esmc_rinalmo_ddft/...
 ```
 
 Each fold writes logs, checkpoints, predictions, and metric CSV files under its corresponding output subdirectory.
+

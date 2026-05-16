@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 os.environ["NUMEXPR_MAX_THREADS"] = "56"
 os.environ["MKL_NUM_THREADS"] = "4"
@@ -128,7 +128,7 @@ class CompositeMetricCallback(pl.Callback):
 class LightningRunner(object):
     def __init__(
         self,
-        model_config="./config/models/esmc_hpra_scratch_token_interface_labelstd.yml",
+        model_config="./config/models/harp_rpa.yml",
         data_config="./config/datasets/PRA310.yml",
         run_config="./config/runs/test_basic.yml",
     ):
@@ -221,10 +221,10 @@ class LightningRunner(object):
                 encoding="utf-8",
             )
 
-            # 淇濆瓨搴曞眰妯″瀷涓?LightningModule 鐨?state_dict锛屽悗缁洿绋?            torch.save(module.model.state_dict(), str(output_dir / "model_state_dict.pt"))
+            # 娣囨繂鐡ㄦ惔鏇炵湴濡€崇€锋稉?LightningModule 閻?state_dict閿涘苯鎮楃紒顓熸纯缁?            torch.save(module.model.state_dict(), str(output_dir / "model_state_dict.pt"))
             torch.save(module.state_dict(), str(output_dir / "lightning_module_state_dict.pt"))
 
-            # 濡備綘浠嶆兂淇濈暀鏁存ā鍨嬩繚瀛橈紝涔熷彲浠ュ彇娑堜笅闈㈣繖琛屾敞閲?            # torch.save(module.model, str(output_dir / "model.pt"))
+            # 婵″倷缍樻禒宥嗗厒娣囨繄鏆€閺佸瓨膩閸ㄥ绻氱€涙﹫绱濇稊鐔峰讲娴犮儱褰囧☉鍫滅瑓闂堛垼绻栫悰灞炬暈闁?            # torch.save(module.model, str(output_dir / "model.pt"))
 
     def select_module(self, stage, log_dir):
         if stage == "dG":
@@ -387,3 +387,4 @@ class LightningRunner(object):
 
 if __name__ == "__main__":
     fire.Fire(LightningRunner)
+
