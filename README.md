@@ -1,4 +1,4 @@
-﻿# HARP-RPA
+# HARP-RPA
 
 HARP-RPA is a protein-RNA binding affinity prediction framework built around heterogeneous residue-pair modeling. It combines pretrained protein and RNA sequence encoders with explicit protein/RNA/interface pair construction, a relation-aware HeteroPairFormer backbone, and an interface-aware readout for complex-level binding free-energy prediction.
 
@@ -28,44 +28,52 @@ conda env create -f environment.yml
 conda activate harp_rpa
 ```
 
-HARP-RPA uses ESMC as the default protein encoder. The code first tries to load
-ESMC from the EvolutionaryScale pretrained registry. If you use a local ESMC
-checkpoint, set the path explicitly before running:
+## Model Weights
+
+HARP-RPA uses ESMC as the default protein encoder. ESMC weights are not included in this repository. By default, the code loads ESMC from the EvolutionaryScale pretrained registry. For offline use, set a local ESMC checkpoint path before running:
 
 ```bash
 export ESMC_600M_WEIGHTS=/path/to/esmc_600m_2024_12_v0.pth
 ```
 
-Download released weights from Hugging Face:
+The released HARP-RPA checkpoints and RiNALMo pretrained weights are hosted on Hugging Face:
 
 ```bash
-hf download bowen12355/HARP-RPA --local-dir weights
+hf auth login   # required if the Hugging Face repository is private
+hf download bowen12355/HARP-RPA \
+  --local-dir weights \
+  --exclude README.md \
+  --exclude .gitattributes
 ```
 
-If the Hugging Face repository is private, log in first:
-
-```bash
-hf auth login
-```
-
-The downloaded files should follow this layout:
+After downloading, the `weights/` directory should contain:
 
 ```text
-weights/rinalmo_giga_pretrained.pt
-weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold0.ckpt
-weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold1.ckpt
-weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold2.ckpt
-weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold3.ckpt
-weights/HARP-RPA_PRA310_S_5fold/HARP-RPA_fold4.ckpt
-weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold0.ckpt
-weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold1.ckpt
-weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold2.ckpt
-weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold3.ckpt
-weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold4.ckpt
+weights/
+|-- rinalmo_giga_pretrained.pt
+|-- sha256sums.txt
+|-- HARP-RPA_PRA310_S_5fold/
+|   |-- HARP-RPA_fold0.ckpt
+|   |-- HARP-RPA_fold1.ckpt
+|   |-- HARP-RPA_fold2.ckpt
+|   |-- HARP-RPA_fold3.ckpt
+|   `-- HARP-RPA_fold4.ckpt
+`-- HARP-RPA_PRA310_benchmark_5fold/
+    |-- HARP-RPA_fold0.ckpt
+    |-- HARP-RPA_fold1.ckpt
+    |-- HARP-RPA_fold2.ckpt
+    |-- HARP-RPA_fold3.ckpt
+    `-- HARP-RPA_fold4.ckpt
 ```
 
-Model checkpoints and pretrained weights are not tracked by git. The `weights`
-directory contains only a README placeholder in the repository.
+To verify file integrity:
+
+```bash
+cd weights
+sha256sum -c sha256sums.txt
+```
+
+Model checkpoints and pretrained weights are not tracked by git. The `weights/` directory in the GitHub repository only contains a README placeholder.
 
 ## Model Type
 
@@ -228,4 +236,3 @@ output_dir: ./outputs/esmc_rinalmo_ddft/...
 ```
 
 Each fold writes logs, checkpoints, predictions, and metric CSV files under its corresponding output subdirectory.
-
