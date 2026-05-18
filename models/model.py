@@ -199,6 +199,7 @@ def segment_cat_pad(prot_embedding, prot_chains, prot_mask, na_embedding, na_cha
 
 
 @R.register('harp_rpa')
+@R.register('copra')
 class ESM2RiNALMo(nn.Module):
     def __init__(
         self,
