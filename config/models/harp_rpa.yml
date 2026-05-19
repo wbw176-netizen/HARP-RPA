@@ -1,8 +1,7 @@
 resume: null
 
 model:
-  #model_type: harp_rpa
-  model_type: copra
+  model_type: harp_rpa
   pair_encoder_type: hetero_pair
   coformer_type: hetero_pairformer
 
