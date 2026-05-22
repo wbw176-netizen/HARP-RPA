@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 os.environ["NUMEXPR_MAX_THREADS"] = "56"
 os.environ["MKL_NUM_THREADS"] = "4"
@@ -57,74 +57,6 @@ def init_pytorch_settings():
         torch.backends.cudnn.allow_tf32 = True
 
 
-class CompositeMetricCallback(pl.Callback):
-    """Combine correlation and error metrics into a single checkpoint metric.
-
-    Expected validation metric keys from LightningModule:
-      - val/all_pearson
-      - val/all_spearman
-      - val/all_rmse
-      - val/all_mae
-
-    Composite score:
-      0.40 * pearson + 0.30 * spearman
-      + 0.15 / (1 + rmse) + 0.15 / (1 + mae)
-
-    This keeps every term roughly in [0, 1], so RMSE/MAE do not dominate.
-    """
-
-    def __init__(
-        self,
-        monitor_name="val_composite",
-        pearson_key="val/all_pearson",
-        spearman_key="val/all_spearman",
-        rmse_key="val/all_rmse",
-        mae_key="val/all_mae",
-    ):
-        super().__init__()
-        self.monitor_name = monitor_name
-        self.pearson_key = pearson_key
-        self.spearman_key = spearman_key
-        self.rmse_key = rmse_key
-        self.mae_key = mae_key
-
-    @staticmethod
-    def _to_float(x):
-        if x is None:
-            return None
-        if isinstance(x, torch.Tensor):
-            if x.numel() == 0:
-                return None
-            return x.detach().float().cpu().item()
-        return float(x)
-
-    def on_validation_epoch_end(self, trainer, pl_module):
-        metrics = trainer.callback_metrics
-
-        pearson = self._to_float(metrics.get(self.pearson_key))
-        spearman = self._to_float(metrics.get(self.spearman_key))
-        rmse = self._to_float(metrics.get(self.rmse_key))
-        mae = self._to_float(metrics.get(self.mae_key))
-
-        if any(v is None for v in [pearson, spearman, rmse, mae]):
-            return
-
-        score = (
-            0.25 * pearson
-            + 0.25 * spearman
-            + 0.25 / (1.0 + rmse)
-            + 0.25 / (1.0 + mae)
-        )
-
-        score_tensor = torch.tensor(score, device=pl_module.device)
-        trainer.callback_metrics[self.monitor_name] = score_tensor
-        trainer.logged_metrics[self.monitor_name] = score_tensor
-        trainer.progress_bar_metrics[self.monitor_name] = score_tensor
-
-        if trainer.logger is not None:
-            trainer.logger.log_metrics({self.monitor_name: score}, step=trainer.global_step)
-
-
 class LightningRunner(object):
     def __init__(
         self,
@@ -180,9 +112,6 @@ class LightningRunner(object):
         filename_metric = monitor_metric.replace("/", "_")
 
         callbacks = []
-        if monitor_metric == "val_composite":
-            callbacks.append(CompositeMetricCallback(monitor_name="val_composite"))
-
         callbacks.extend(
             [
                 EarlyStopping(
@@ -221,10 +150,10 @@ class LightningRunner(object):
                 encoding="utf-8",
             )
 
-            # 娣囨繂鐡ㄦ惔鏇炵湴濡€崇€锋稉?LightningModule 閻?state_dict閿涘苯鎮楃紒顓熸纯缁?            torch.save(module.model.state_dict(), str(output_dir / "model_state_dict.pt"))
+
             torch.save(module.state_dict(), str(output_dir / "lightning_module_state_dict.pt"))
 
-            # 婵″倷缍樻禒宥嗗厒娣囨繄鏆€閺佸瓨膩閸ㄥ绻氱€涙﹫绱濇稊鐔峰讲娴犮儱褰囧☉鍫滅瑓闂堛垼绻栫悰灞炬暈闁?            # torch.save(module.model, str(output_dir / "model.pt"))
+
 
     def select_module(self, stage, log_dir):
         if stage == "dG":
@@ -387,4 +316,5 @@ class LightningRunner(object):
 
 if __name__ == "__main__":
     fire.Fire(LightningRunner)
+
 
