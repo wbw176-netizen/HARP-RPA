@@ -5,7 +5,7 @@ output_dir: './outputs/harp_rpa/mCSM/zero_shot_blind_test'
 gpus:
   - 0
 ckpts: 
-  - './outputs/PRA310_Finetune/log_fold_3/checkpoint/5-0.6134.ckpt'
+  - './outputs/PRA310_Benchmark/log_fold_3/checkpoint/0.ckpt'
 
 run_name: 'harp_rpa_mCSM_blind_test'
 wandb: False
