@@ -1,6 +1,6 @@
 epochs: 80
 accumulate_grad_batches: 8
-patience: 8
+patience: 12
 output_dir: './outputs/finetune_ablation/PRA301_top_k_2'
 gpus:
   - 0
