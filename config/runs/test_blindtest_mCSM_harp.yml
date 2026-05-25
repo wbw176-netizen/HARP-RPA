@@ -1,0 +1,15 @@
+epochs: 0
+patience: 1
+output_dir: './outputs/HARP-RPI/mCSM/blind_test'
+gpus:
+  - 0
+
+# Replace this with the best ddG-finetuned checkpoint.
+ckpts:
+  - './outputs/HARP-RPI/mCSM/finetune/log_fold_0/checkpoint/best.ckpt'
+
+run_name: 'harp_rpi_mCSM_blind_test'
+wandb: false
+num_folds: 1
+
+# ddG uses the single hetero mutation-interface delta branch in models/model.py.

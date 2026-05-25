@@ -1,0 +1,20 @@
+epochs: 80
+accumulate_grad_batches: 8
+patience: 12
+output_dir: './outputs/HARP-RPI/mCSM/finetune_fold3'
+gpus:
+  - 0
+
+# Replace this with the dG checkpoint trained on PRA310/PRA201.
+# Supervised ddG fine-tuning initializes from the affinity model.
+# ckpt: 'outputs/esmc_rinalmo_ddft/PRA310_1337/log_fold_0/checkpoint/15-0.6459.ckpt'
+ckpt: 'outputs/esmc_rinalmo_ddft/PRA310_s_1337/log_fold_3/checkpoint/19-0.6019.ckpt'
+ckpt_load_mode: model
+reset_pred_head: false
+
+run_name: 'harp_rpi_mCSM_finetune'
+wandb: false
+num_folds: 1
+monitor_metric: val/pc_pearson
+
+# ddG uses the single hetero mutation-interface delta branch in models/model.py.
