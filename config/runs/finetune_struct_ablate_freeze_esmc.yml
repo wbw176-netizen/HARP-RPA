@@ -1,0 +1,18 @@
+{
+  "epochs": 80,
+  "accumulate_grad_batches": 8,
+  "patience": 8,
+  "output_dir": "./outputs/ablation_repaired_v1/PRA310/freeze_esmc",
+  "gpus": [
+    0
+  ],
+  "ckpt": null,
+  "run_name": "ablation_freeze_esmc",
+  "wandb": false,
+  "num_folds": 5,
+  "monitor_metric": "val_composite",
+  "save_top_k": 0,
+  "test_best": false,
+  "save_model": false,
+  "audit_ablation": true
+}

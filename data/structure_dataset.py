@@ -47,6 +47,26 @@ def _process_structure(structure_path, structure_id, valid_prot_chains=None, val
     return data
 
 
+def _pairwise_min_atom_dist(pos_atoms, mask_atoms, chunk_size=8):
+    length = pos_atoms.shape[0]
+    atom_min_dist = torch.empty((length, length), dtype=pos_atoms.dtype, device=pos_atoms.device)
+
+    for start in range(0, length, chunk_size):
+        end = min(start + chunk_size, length)
+        d = torch.linalg.norm(
+            pos_atoms[start:end, None, :, None, :] - pos_atoms[None, :, None, :, :],
+            dim=-1,
+            ord=2,
+        ).reshape(end - start, length, -1)
+        mask = (
+            mask_atoms[start:end, None, :, None] * mask_atoms[None, :, None, :]
+        ).reshape(end - start, length, -1)
+        d[~mask] = torch.inf
+        atom_min_dist[start:end] = torch.min(d, dim=-1)[0]
+
+    return atom_min_dist
+
+
 @R.register('structure_dataset')
 class StructureDataset(Dataset):
     ''' 
@@ -88,59 +108,24 @@ class StructureDataset(Dataset):
         
     def load_data(self):
         self.data = []
+        base_cache = {}
         for i, row in tqdm(self.df.iterrows(), total=len(self.df)):
-            structure_id = row[self.col_prot_name]
-            complex = row[self.col_prot_name]
-            if self.mut:
-                structure_id += '_' + row['MUTATION']
-            if self.diskcache is None or structure_id not in self.diskcache:
-                prot_chains = row[self.col_prot_chain].split(',')
- 
-                na_chains = row[self.col_na_chain].split(',')
-                if self.mut:
-                    pdb_path = os.path.join(self.data_root, structure_id.split('_')[0]+'.pdb')
-                else:
-                    pdb_path = os.path.join(self.data_root, structure_id+'.pdb')
+            base_structure_id = row[self.col_prot_name]
+            complex = base_structure_id
+            prot_chains = row[self.col_prot_chain].split(',')
+            na_chains = row[self.col_na_chain].split(',')
+            structure_id = f"{base_structure_id}_{row[self.col_prot_chain]}_{row[self.col_na_chain]}"
 
-                label = row[self.col_label]
-                
+            if structure_id in base_cache:
+                cplx = base_cache[structure_id]
+            elif self.diskcache is not None and structure_id in self.diskcache:
+                cplx = self.diskcache[structure_id]
+                base_cache[structure_id] = cplx
+            else:
+                pdb_path = os.path.join(self.data_root, base_structure_id + '.pdb')
                 cplx = _process_structure(pdb_path, structure_id, prot_chains, na_chains)
+                atom_min_dist = _pairwise_min_atom_dist(cplx['pos_heavyatom'], cplx['mask_heavyatom'])
 
-                if self.mut:
-                    prot_mut = row[self.col_mut]
-                    mut_list = prot_mut.split(',')
-                    mut_list_to_type = []
-                    for mut_seq in mut_list:
-                        mut_seq = mut_seq[2:]
-                        for res in mut_seq:
-                            restype_idx = restype_order.get(res, restype_num)
-                            mut_list_to_type.append(restype_idx)
-                    na = row[self.col_na]
-                    na_list = na.split(',')
-                    for na_seq in na_list:
-                        na_seq = na_seq[2:]
-                        for na in na_seq:
-                            if na in RNA_NUCLEOTIDES:
-                                na_idx = RNA_NUCLEOTIDES.index(na) + 21
-                            else:
-                                na_idx = len(RNA_NUCLEOTIDES) + 21
-                            mut_list_to_type.append(na_idx)
-                    mut_seqs = [i[2:] for i in mut_list]
-                    mut_restype = torch.tensor(mut_list_to_type, device=cplx['restype'].device)
-                    mut_identifier = mut_restype != cplx['restype']
-                    assert len(mut_restype) == len(cplx['restype'])
-                    if (mut_restype != cplx['restype']).sum().item() != 1:
-                        print('Name:', structure_id)
-                        print("Mut:", mut_restype)
-                        print("Wild:", cplx['restype'])
-                        print("Diff:", (mut_restype != cplx['restype']).sum())
-                L = len(cplx['seq'])
-                gpu_atoms = cplx['pos_heavyatom']
-                gpu_masks = cplx['mask_heavyatom']
-                distance_map = torch.linalg.norm(gpu_atoms[:, None, :, None, :]- gpu_atoms[None, :, None, :, :], dim=-1, ord=2).reshape(L, L, -1)
-                mask = (gpu_masks[:, None, :, None] * gpu_masks[None, :, None, :]).reshape(L, L, -1)
-                distance_map[~mask] = torch.inf
-                atom_min_dist = torch.min(distance_map, dim=-1)[0]
                 max_prot_length = 0
                 max_na_length = 0
                 for prot_seq in cplx.prot_seqs:
@@ -149,36 +134,55 @@ class StructureDataset(Dataset):
                 for na_seq in cplx.rna_seqs:
                     if len(na_seq) > max_na_length:
                         max_na_length = len(na_seq)
-                if self.mut:
-                    item = {
-                        'complex': complex,
-                        'labels': label,
-                        'atom_min_dist': atom_min_dist, # needs 2D padding
-                        'max_prot_length': max_prot_length,
-                        'max_na_length': max_na_length,
-                        'mut_seqs': mut_seqs,
-                        'mut_restype': mut_restype,
-                        'mut_identifier': mut_identifier
-                }
-                else:
-                    item = {
-                        'complex': complex,
-                        'labels': label,
-                        'atom_min_dist': atom_min_dist, # needs 2D padding
-                        'max_prot_length': max_prot_length,
-                        'max_na_length': max_na_length
-                    }
-                    
-                cplx.update(item)
-                # print("Complex {} is:".format(i), cplx)
-                self.data.append(cplx)
+
+                cplx.update({
+                    'atom_min_dist': atom_min_dist,
+                    'max_prot_length': max_prot_length,
+                    'max_na_length': max_na_length,
+                })
+                base_cache[structure_id] = cplx
                 if self.diskcache is not None:
                     self.diskcache[structure_id] = cplx
-            
-            else:
-                data = self.diskcache[structure_id]
-                data['complex'] = complex
-                self.data.append(data)
+
+            data = dict(cplx)
+            data['complex'] = complex
+            data['labels'] = float(row[self.col_label])
+
+            if self.mut:
+                prot_mut = row[self.col_mut]
+                mut_list = prot_mut.split(',')
+                mut_list_to_type = []
+                for mut_seq in mut_list:
+                    mut_seq = mut_seq[2:]
+                    for res in mut_seq:
+                        restype_idx = restype_order.get(res, restype_num)
+                        mut_list_to_type.append(restype_idx)
+                na = row[self.col_na]
+                na_list = na.split(',')
+                for na_seq in na_list:
+                    na_seq = na_seq[2:]
+                    for na in na_seq:
+                        if na in RNA_NUCLEOTIDES:
+                            na_idx = RNA_NUCLEOTIDES.index(na) + 21
+                        else:
+                            na_idx = len(RNA_NUCLEOTIDES) + 21
+                        mut_list_to_type.append(na_idx)
+                mut_seqs = [i[2:] for i in mut_list]
+                mut_restype = torch.tensor(mut_list_to_type, device=cplx['restype'].device)
+                mut_identifier = mut_restype != cplx['restype']
+                assert len(mut_restype) == len(cplx['restype'])
+                if (mut_restype != cplx['restype']).sum().item() != 1:
+                    print('Name:', f"{base_structure_id}_{row['MUTATION']}")
+                    print("Mut:", mut_restype)
+                    print("Wild:", cplx['restype'])
+                    print("Diff:", (mut_restype != cplx['restype']).sum())
+                data.update({
+                    'mut_seqs': mut_seqs,
+                    'mut_restype': mut_restype,
+                    'mut_identifier': mut_identifier,
+                })
+
+            self.data.append(data)
     
     def __len__(self):
         return len(self.data)
@@ -242,9 +246,13 @@ class CustomStructCollate(object):
 
     def collate_complex(self, data_list):
         max_length = max([data[self.length_ref_key].size(0) for data in data_list])
+        has_distances = ['atom_min_dist' in data for data in data_list]
+        if any(has_distances) and not all(has_distances):
+            raise ValueError('atom_min_dist must be present in every sample or absent in every sample')
         keys_inter = self._get_common_keys(data_list)
         keys = []
         keys_not_pad = []
+        # Pair distances need two-axis padding below, not the one-axis residue padding.
         keys_ignore = ['prot_seqs', 'rna_seqs', 'mut_seqs', 'max_prot_length', 'max_na_length', 'atom_min_dist']
         for key in keys_inter:
             if key in keys_ignore:
@@ -264,6 +272,18 @@ class CustomStructCollate(object):
                 for k, v in data.items()
                 if k in keys
             }
+            if 'atom_min_dist' in data:
+                dist = data['atom_min_dist']
+                length = data[self.length_ref_key].size(0)
+                if not isinstance(dist, torch.Tensor) or dist.shape != (length, length):
+                    raise ValueError('atom_min_dist must be a square tensor matching the selected residues')
+                if not torch.is_floating_point(dist):
+                    raise ValueError('atom_min_dist must have a floating-point dtype')
+                # Keep the patch order; special-token alignment is handled by the model.
+                # Infinite distances exclude padding from the interface readout.
+                padded_dist = dist.new_full((max_length, max_length), float('inf'))
+                padded_dist[:length, :length] = dist
+                data_padded['atom_min_dist'] = padded_dist
             for k in keys_not_pad:
                 data_padded[k] = data[k]
             data_padded['mask'] = self._get_pad_mask(data[self.length_ref_key].size(0), max_length)
@@ -350,7 +370,9 @@ class CustomStructCollate(object):
         batch['na_chains'] = na_chains
         batch['na_mask'] = na_mask
         batch['strategy'] = self.strategy
-        batch['labels'] = batch['labels'].float()
+        labels = batch['labels']
+        if isinstance(labels, torch.Tensor):
+            batch['labels'] = labels.float()
+        else:
+            batch['labels'] = torch.tensor([float(x) for x in labels], dtype=torch.float32)
         return batch
-    
-    

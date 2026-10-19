@@ -1,13 +1,18 @@
-epochs: 80
-accumulate_grad_batches: 8
-patience: 8
-output_dir: './outputs/finetune_ablation/PRA310/lora_only'
-gpus:
-  - 0
-
-ckpt: null
-
-run_name: 'esmc_rinalmo_ddft_patch256'
-wandb: False
-num_folds: 5
-monitor_metric: val_composite
+{
+  "epochs": 80,
+  "accumulate_grad_batches": 8,
+  "patience": 8,
+  "output_dir": "./outputs/ablation_repaired_v2/PRA310/lora_only",
+  "gpus": [
+    0
+  ],
+  "ckpt": null,
+  "run_name": "ablation_lora_only",
+  "wandb": false,
+  "num_folds": 5,
+  "monitor_metric": "val_composite",
+  "save_top_k": 0,
+  "test_best": false,
+  "save_model": false,
+  "audit_ablation": true
+}

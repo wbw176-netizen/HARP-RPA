@@ -1,0 +1,64 @@
+{
+  "resume": null,
+  "model": {
+    "model_type": "harp_rpa",
+    "pair_encoder_type": "hetero_pair",
+    "coformer_type": "hetero_pairformer",
+    "esm_type": "esmc-600m",
+    "pooling": "token",
+    "output_dim": 1,
+    "interface_cross_relation_id": 4,
+    "interface_dist_tau": 8.0,
+    "fix_lms": false,
+    "lora_tune": true,
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "break_point": 30,
+    "fusion_layer": 18,
+    "rinalmo_lora_tune": true,
+    "rinalmo_lora_rank": 8,
+    "rinalmo_lora_alpha": 16,
+    "rinalmo_full_ft_last_k": 2,
+    "rinalmo_train_ffn": false,
+    "rinalmo_freeze": false,
+    "pair_dim": 64,
+    "pair_max_num_atoms": 4,
+    "coformer": {
+      "embed_dim": 320,
+      "pair_dim": 64,
+      "num_blocks": 6,
+      "num_heads": 20,
+      "num_relations": 8,
+      "use_rot_emb": true,
+      "attn_qkv_bias": false,
+      "attention_dropout": 0.1,
+      "transition_dropout": 0.0,
+      "residual_dropout": 0.1,
+      "transition_factor": 4,
+      "use_flash_attn": false
+    }
+  },
+  "train": {
+    "temperature": 0.2,
+    "max_iters": 30000,
+    "val_freq": 1000,
+    "seed": 42,
+    "label_standardize": true,
+    "label_std_eps": 0.000001,
+    "max_grad_norm": 10.0,
+    "optimizer": {
+      "type": "adam",
+      "lr": 0.00001,
+      "trunk_lr": 0.00005,
+      "weight_decay": 0.00001,
+      "beta1": 0.9,
+      "beta2": 0.999
+    },
+    "scheduler": {
+      "type": "plateau",
+      "factor": 0.8,
+      "patience": 5,
+      "min_lr": 0.000001
+    }
+  }
+}

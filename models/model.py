@@ -134,7 +134,22 @@ def load_rinalmo(rinalmo_weights, rinalmo_type):
     return model, feat_size
 
 
-def cat_pad(prot_embedding, prot_mask, na_embedding, na_mask, max_len, patch_idx):
+def _select_valid_patch_embeddings(selected, patch_idx, patch_mask):
+    """Ignore padded indices, not index value zero (a valid first residue)."""
+    if patch_mask is None:
+        raise ValueError('patch_idx requires the residue padding mask from collate')
+    if patch_idx.dim() != 1 or patch_mask.shape != patch_idx.shape:
+        raise ValueError('patch_idx and patch_mask must be matching one-dimensional tensors')
+    valid = patch_mask.to(device=selected.device, dtype=torch.bool)
+    # Collate right-pads all structural fields. Reject holes instead of silently
+    # compacting embeddings out of alignment with coordinates and distances.
+    if ((~valid[:-1]) & valid[1:]).any().item():
+        raise ValueError('patch_mask must describe right padding only')
+    indices = patch_idx.to(device=selected.device)[valid]
+    return torch.index_select(selected, 0, indices)
+
+
+def cat_pad(prot_embedding, prot_mask, na_embedding, na_mask, max_len, patch_idx, patch_mask=None):
     new_complexes = []
     masks = []
 
@@ -149,7 +164,8 @@ def cat_pad(prot_embedding, prot_mask, na_embedding, na_mask, max_len, patch_idx
         selected = torch.index_select(item_embed, 0, indices)
 
         if patch_idx is not None:
-            selected = torch.index_select(selected, 0, patch_idx[i])
+            selected = _select_valid_patch_embeddings(
+                selected, patch_idx[i], None if patch_mask is None else patch_mask[i])
 
         p1d = (0, 0, 0, max_len - len(selected))
         selected_pad = F.pad(selected, p1d, 'constant', 0)
@@ -164,7 +180,7 @@ def cat_pad(prot_embedding, prot_mask, na_embedding, na_mask, max_len, patch_idx
     return result, masks
 
 
-def segment_cat_pad(prot_embedding, prot_chains, prot_mask, na_embedding, na_chains, na_mask, max_len, patch_idx=None):
+def segment_cat_pad(prot_embedding, prot_chains, prot_mask, na_embedding, na_chains, na_mask, max_len, patch_idx=None, patch_mask=None):
     cum_prot = torch.cat([torch.tensor([0]), torch.cumsum(torch.Tensor(prot_chains), dim=0)]).int()
     cum_na = torch.cat([torch.tensor([0]), torch.cumsum(torch.Tensor(na_chains), dim=0)]).int()
 
@@ -183,7 +199,8 @@ def segment_cat_pad(prot_embedding, prot_chains, prot_mask, na_embedding, na_cha
         selected = torch.index_select(item_embed, 0, indices)
 
         if patch_idx is not None:
-            selected = torch.index_select(selected, 0, patch_idx[i])
+            selected = _select_valid_patch_embeddings(
+                selected, patch_idx[i], None if patch_mask is None else patch_mask[i])
 
         p1d = (0, 0, 0, max_len - len(selected))
         selected_pad = F.pad(selected, p1d, 'constant', 0)
@@ -871,19 +888,20 @@ class ESM2RiNALMo(nn.Module):
         na_embedding = na_embedding.float()
         max_len = input['pos_atoms'].shape[1]
         patch_idx = input.get('patch_idx', None)
+        patch_mask = input.get('mask', None)
 
         if strategy == 'separate':
             out_embedding, masks = segment_cat_pad(
                 prot_embedding, prot_chains, prot_mask,
                 na_embedding, na_chains, na_mask,
-                max_len, patch_idx
+                max_len, patch_idx, patch_mask=patch_mask
             )
             assert out_embedding.shape[0] == input['size']
         else:
             out_embedding, masks = cat_pad(
                 prot_embedding, prot_mask,
                 na_embedding, na_mask,
-                max_len, patch_idx
+                max_len, patch_idx, patch_mask=patch_mask
             )
             assert out_embedding.shape[0] == input['size']
 
@@ -1028,4 +1046,3 @@ class ESM2RiNALMo(nn.Module):
 
         else:
             raise NotImplementedError
-
