@@ -239,7 +239,7 @@ Each fold writes logs, checkpoints, predictions, and metric CSV files under its 
 
 ## License
 
-Original HARP-RPA code and modifications by Bowen Wang and Xiaolan Xie are
+Original HARP-RPA code and modifications by Bowen Wang are
 licensed under the [MIT License](LICENSE).
 
 Third-party code retains its original copyright notices and licenses. In
