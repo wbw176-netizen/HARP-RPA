@@ -236,3 +236,13 @@ output_dir: ./outputs/esmc_rinalmo_ddft/...
 ```
 
 Each fold writes logs, checkpoints, predictions, and metric CSV files under its corresponding output subdirectory.
+
+## License
+
+Original HARP-RPA code and modifications by Bowen Wang and Xiaolan Xie are
+licensed under the [MIT License](LICENSE).
+
+Third-party code retains its original copyright notices and licenses. In
+particular, the bundled RiNALMo code remains under its Apache License 2.0
+([RiNALMo/LICENSE](RiNALMo/LICENSE)). This project license does not replace
+the licenses of third-party code, pretrained models, model weights, or datasets.
