@@ -89,6 +89,10 @@ class ModelModule(pl.LightningModule):
         return (y - self.label_mean.to(y.device)) / self.label_std.to(y.device).clamp_min(self.label_std_eps)
 
     def _restore_labels(self, y):
+        # Match the MS2 training adapter's float32 label restoration while
+        # retaining the original calculation for existing dataset types.
+        if getattr(self.data_args, 'dataset_type', None) == 'ms2_template_dataset':
+            y = y.float()
         if not self.label_standardize:
             return y
         return y * self.label_std.to(y.device) + self.label_mean.to(y.device)

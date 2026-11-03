@@ -15,6 +15,7 @@ def get_dataset(data_args:dict=None):
 def get_collate(dataset_type):
     collate_dict = {'sequence_dataset': CustomSeqCollate,
                     'structure_dataset': CustomStructCollate,
+                    'ms2_template_dataset': CustomStructCollate,
                     }
     return collate_dict[dataset_type]
 

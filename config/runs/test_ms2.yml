@@ -1,0 +1,13 @@
+output_dir: './outputs/MS2_checkpoint_test/'
+
+gpus: [0]
+num_folds: 5
+run_name: 'harp_rpa_ms2_test'
+wandb: false
+
+ckpts:
+  - './weights/MS2_5fold/HARP-RPA_MS2_fold_0.ckpt'
+  - './weights/MS2_5fold/HARP-RPA_MS2_fold_1.ckpt'
+  - './weights/MS2_5fold/HARP-RPA_MS2_fold_2.ckpt'
+  - './weights/MS2_5fold/HARP-RPA_MS2_fold_3.ckpt'
+  - './weights/MS2_5fold/HARP-RPA_MS2_fold_4.ckpt'
