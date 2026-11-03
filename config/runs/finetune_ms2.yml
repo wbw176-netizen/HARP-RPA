@@ -1,0 +1,13 @@
+epochs: 80
+accumulate_grad_batches: 8
+patience: 12
+output_dir: './outputs/R2_MS2_5fold_composite_original/'
+gpus: [0]
+ckpt: null
+run_name: 'r2_ms2_1zdh_fresh_5fold_composite_original'
+wandb: false
+num_folds: 5
+monitor_metric: val_composite
+save_top_k: 1
+test_best: true
+save_model: true

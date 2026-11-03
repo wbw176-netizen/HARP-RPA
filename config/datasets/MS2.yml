@@ -1,0 +1,21 @@
+dataset_type: ms2_template_dataset
+df_path: './datasets/MS2/splits/MS2.csv'
+data_root: './datasets/MS2/PDBs'
+batch_size: 4
+num_workers: 0
+pin_memory: true
+cache_dir: null
+col_prot_chain: 'Protein chains'
+col_na_chain: 'RNA chains'
+col_prot: 'Protein sequences'
+col_na: 'RNA sequences'
+col_label: '△G(kcal/mol)'
+loss_type: regression
+strategy: separate
+transform:
+  - type: select_atom
+    resolution: backbone
+  - type: ms2_mask_template_backbone
+  - type: selected_region_with_distmap
+    patch_size: 256
+  - type: subtract_center_of_mass
