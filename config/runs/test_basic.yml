@@ -1,4 +1,4 @@
-output_dir: './outputs/harp_rpa/test/'
+output_dir: './outputs/harp_rpa/test_basic/'
 gpus:
   - 0
 # To test PRA201, use config/datasets/PRA201.yml and replace the paths below with the five checkpoints from weights/PRA201_Benchmark/ in fold order.
@@ -9,6 +9,6 @@ ckpts:
   - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold3.ckpt
   - ./weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold4.ckpt
 
-run_name: 'harp_rpa'
+run_name: 'harp_rpa_test_basic'
 wandb: False
 num_folds: 5
