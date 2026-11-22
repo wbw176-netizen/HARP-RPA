@@ -34,6 +34,9 @@ class DDGModule(pl.LightningModule):
         self.model_args = model_args
         self.data_args = data_args
         self.run_args = run_args
+        self.use_dg_delta = getattr(run_args, "mutation_inference_mode", None) == "dg_delta"
+        if self.use_dg_delta:
+            self.register_buffer("label_std", torch.tensor(1.0, dtype=torch.float32))
         self.optimizers_cfg = self.model_args.train.optimizer
         self.scheduler_cfg = self.model_args.train.scheduler
         self.valid_it = 0
@@ -220,7 +223,18 @@ class DDGModule(pl.LightningModule):
         
     def test_step(self, batch, batch_idx):
         y = batch['labels']
-        ddg_pred, ddg_pred_inv = self.model(batch, self.data_args.strategy, 'mutation')
+        if self.use_dg_delta:
+            wild_pred = self.model(batch, self.data_args.strategy, "finetune")
+            mut_batch = dict(batch)
+            mut_batch["prot"] = batch["prot_mut"]
+            mut_batch["restype"] = batch["mut_restype"]
+            mut_pred = self.model(mut_batch, self.data_args.strategy, "finetune")
+            ddg_pred = wild_pred - mut_pred
+            if self.model_args.train.label_standardize:
+                ddg_pred = ddg_pred * self.label_std
+            ddg_pred_inv = -ddg_pred
+        else:
+            ddg_pred, ddg_pred_inv = self.model(batch, self.data_args.strategy, "mutation")
         loss = get_loss(self.l_type, ddg_pred, y, reduction='mean')
         loss_inv = get_loss(self.l_type, ddg_pred_inv, -y, reduction='mean')
         test_loss = 0.5 * (loss + loss_inv)
