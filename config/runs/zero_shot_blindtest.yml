@@ -14,4 +14,4 @@ ckpts:
 run_name: 'harp_rpa_mCSM_blind_test'
 wandb: False
 num_folds: 1
-test_fold: 0
+test_zero_shot_fold: 0
