@@ -234,10 +234,18 @@ class LightningRunner(object):
                 log_every_n_steps=3,
             )
 
+            ckpt_path = self.run_args.ckpt
+            if self.run_args.get("ckpt_load_mode") == "model":
+                model.load_state_dict(
+                    torch.load(ckpt_path, map_location="cpu")["state_dict"],
+                    strict=False,
+                )
+                ckpt_path = None
+
             trainer.fit(
                 model=model,
                 datamodule=data_module,
-                ckpt_path=self.run_args.ckpt,
+                ckpt_path=ckpt_path,
             )
 
             print(f"Training fold {k} Finished!")
