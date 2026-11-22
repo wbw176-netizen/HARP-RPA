@@ -30,29 +30,41 @@ conda env create -f environment.yml
 conda activate harp_rpa
 ```
 
-## Model Weights
 
-HARP-RPA uses ESMC as the default protein encoder. ESMC weights are not included in this repository. By default, the code loads ESMC from the EvolutionaryScale pretrained registry. For offline use, set a local ESMC checkpoint path before running:
+## Pretrained Encoders
+
+### ESMC-600M
+
+HARP-RPA loads ESMC-600M through the `esm` package. For offline use, download the [original ESMC-600M checkpoint](https://huggingface.co/biohub/esmc-600m-2024-12/blob/main/data/weights/esmc_600m_2024_12_v0.pth) and set its local path.
 
 ```bash
 export ESMC_600M_WEIGHTS=/path/to/esmc_600m_2024_12_v0.pth
 ```
 
-The released HARP-RPA checkpoints and RiNALMo pretrained weights are hosted on Hugging Face:
+### RiNALMo Giga (650M)
+
+Download the [RiNALMo pretrained weights](https://zenodo.org/records/15043668) from the repository root.
 
 ```bash
-hf auth login   # required if the Hugging Face repository is private
+mkdir -p weights
+curl -fL https://zenodo.org/records/15043668/files/rinalmo_giga_pretrained.pt -o weights/rinalmo_giga_pretrained.pt
+```
+
+## HARP-RPA Checkpoints
+
+Download the trained HARP-RPA checkpoints from [Hugging Face](https://huggingface.co/bowen12355/HARP-RPA-V1).
+
+```bash
 hf download bowen12355/HARP-RPA-V1 \
   --local-dir weights \
   --exclude README.md \
   --exclude .gitattributes
 ```
 
-After downloading, the `weights/` directory should contain:
+The downloaded HARP-RPA checkpoints have this layout.
 
 ```text
 weights/
-|-- rinalmo_giga_pretrained.pt
 |-- HARP-RPA_PRA310_S_5fold/
 |   |-- HARP-RPA_fold0.ckpt
 |   |-- HARP-RPA_fold1.ckpt
