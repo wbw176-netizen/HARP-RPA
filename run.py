@@ -277,7 +277,7 @@ class LightningRunner(object):
 
         num_devices = self._resolve_num_devices(gpus)
         strategy = self._resolve_trainer_strategy(gpus)
-        precision = self._resolve_precision()
+        precision = getattr(self.run_args, "test_precision", None) or self._resolve_precision()
 
         for k in range(self.run_args.num_folds):
             log_dir = output_dir / f"log_fold_{k}"
