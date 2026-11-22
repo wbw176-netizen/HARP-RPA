@@ -17,8 +17,6 @@ It uses:
 - Heterogeneous token assembly with complex, protein, and RNA special tokens.
 - Heterogeneous residue-pair construction for P-P, R-R, P-R, and special-token pair relations.
 - HeteroPairFormer for joint single-token and pair-representation updates.
-- `token_interface` pooling, combining the complex token with an interface-aware P-R pair readout.
-- Label standardization during affinity training.
 - Dual-depth fine-tuning: shallow LoRA and upper-layer fine-tuning for language-model adaptation.
 
 ## Installation
