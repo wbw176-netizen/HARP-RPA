@@ -1,6 +1,7 @@
 iters: 0
 epochs: 0
 patience: 1
+test_precision: 32
 output_dir: './outputs/harp_rpa/mCSM/zero_shot_blind_test'
 gpus:
   - 0
