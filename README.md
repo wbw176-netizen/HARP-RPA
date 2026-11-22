@@ -35,7 +35,7 @@ conda activate harp_rpa
 
 ### ESMC-600M
 
-HARP-RPA loads ESMC-600M through the `esm` package. For offline use, download the [original ESMC-600M checkpoint](https://huggingface.co/biohub/esmc-600m-2024-12/blob/main/data/weights/esmc_600m_2024_12_v0.pth) and set its local path.
+HARP-RPA loads ESMC-600M through the `esm` package. For offline use, download the [ESMC-600M checkpoint](https://huggingface.co/biohub/esmc-600m-2024-12/blob/main/data/weights/esmc_600m_2024_12_v0.pth) and set its local path.
 
 ```bash
 export ESMC_600M_WEIGHTS=/path/to/esmc_600m_2024_12_v0.pth
