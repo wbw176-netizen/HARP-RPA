@@ -253,7 +253,7 @@ Train and evaluate the five folds.
 python run.py \
   --model_config ./config/models/harp_rpa.yml \
   --data_config ./config/datasets/PRA310_sequence_aware_p50.yml \
-  --run_config ./config/runs/finetune_pra310_p50.yml \
+  --run_config ./config/runs/finetune_struct.yml \
   finetune dG
 ```
 ## Main Architecture
