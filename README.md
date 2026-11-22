@@ -1,4 +1,4 @@
-# HARP-RPA
+<img width="810" height="230" alt="image" src="https://github.com/user-attachments/assets/130f97b5-c593-43b3-8185-5cd5f11ad8f2" /># HARP-RPA
 
 HARP-RPA is a protein-RNA binding affinity prediction framework built around heterogeneous residue-pair modeling. It combines pretrained protein and RNA sequence encoders with explicit protein/RNA/interface pair construction, a relation-aware HeteroPairFormer backbone, and an interface-aware readout for complex-level binding free-energy prediction.
 
@@ -77,6 +77,12 @@ weights/
 |   |-- HARP-RPA_fold2.ckpt
 |   |-- HARP-RPA_fold3.ckpt
 |   `-- HARP-RPA_fold4.ckpt
+|-- PRA201_Benchmark/
+|   |-- fold_0/HARP-RPA_PRA201_fold0.ckpt
+|   |-- fold_1/HARP-RPA_PRA201_fold1.ckpt
+|   |-- fold_2/HARP-RPA_PRA201_fold2.ckpt
+|   |-- fold_3/HARP-RPA_PRA201_fold3.ckpt
+|   `-- fold_4/HARP-RPA_PRA201_fold4.ckpt
 |-- mCSM_RNA_supervised/
 |   |-- fold_0/HARP-RPA_mCSM_fold0.ckpt
 |   |-- fold_1/HARP-RPA_mCSM_fold1.ckpt
