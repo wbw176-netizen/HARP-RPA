@@ -1,7 +1,7 @@
 epochs: 80
 accumulate_grad_batches: 8
 patience: 12
-output_dir: './outputs/HARP-RPI/mCSM/finetune_fold'
+output_dir: './outputs/HARP-RPI/mCSM/finetune_fold0'
 gpus:
   - 0
 # Run once per PRA310 Benchmark checkpoint. Change the index in both paths (0–4)
