@@ -6,10 +6,13 @@ gpus:
 
 # Replace this with the best ddG-finetuned checkpoint.
 ckpts:
-  - './outputs/HARP-RPI/mCSM/finetune/log_fold_0/checkpoint/best.ckpt'
-
+  - './weights/mCSM_RNA_supervised/fold_0/HARP-RPA_mCSM_fold0.ckpt'
+  - './weights/mCSM_RNA_supervised/fold_1/HARP-RPA_mCSM_fold1.ckpt'
+  - './weights/mCSM_RNA_supervised/fold_2/HARP-RPA_mCSM_fold2.ckpt'
+  - './weights/mCSM_RNA_supervised/fold_3/HARP-RPA_mCSM_fold3.ckpt'
+  - './weights/mCSM_RNA_supervised/fold_4/HARP-RPA_mCSM_fold4.ckpt'
 run_name: 'harp_rpi_mCSM_blind_test'
 wandb: false
-num_folds: 1
-
+num_folds: 5
+test_zero_shot_fold: 0
 # ddG uses the single hetero mutation-interface delta branch in models/model.py.
