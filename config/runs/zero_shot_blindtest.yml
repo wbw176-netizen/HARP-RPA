@@ -13,5 +13,5 @@ ckpts:
   - './outputs/PRA310_Benchmark/log_fold_4/checkpoint/0.ckpt'
 run_name: 'harp_rpa_mCSM_blind_test'
 wandb: False
-num_folds: 1
+num_folds: 5
 test_zero_shot_fold: 0
