@@ -235,6 +235,18 @@ python run.py \
   test ddG
 ```
 
+#### Supervised mutation-effect prediction
+
+Use the five released mCSM fine-tuned checkpoints under `weights/mCSM_RNA_supervised/`.
+
+```bash
+python run.py \
+  --model_config ./config/models/harp_rpa.yml \
+  --data_config ./config/datasets/blindtest.yml \
+  --run_config ./config/runs/test_blindtest_mCSM_harp.yml \
+  test ddG
+```
+
 ### MS2-RNA affinity prediction
 
 Download the [five MS2-RNA checkpoints](https://huggingface.co/bowen12355/HARP-RPA-V1/tree/main/MS2_5fold) to `weights/MS2_5fold/` and run the test command.
