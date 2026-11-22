@@ -5,9 +5,13 @@ test_precision: 32
 output_dir: './outputs/harp_rpa/mCSM/zero_shot_blind_test'
 gpus:
   - 0
-ckpts: 
+ckpts:
+  - './outputs/PRA310_Benchmark/log_fold_0/checkpoint/0.ckpt'
+  - './outputs/PRA310_Benchmark/log_fold_1/checkpoint/0.ckpt'
+  - './outputs/PRA310_Benchmark/log_fold_2/checkpoint/0.ckpt'
   - './outputs/PRA310_Benchmark/log_fold_3/checkpoint/0.ckpt'
-
+  - './outputs/PRA310_Benchmark/log_fold_4/checkpoint/0.ckpt'
 run_name: 'harp_rpa_mCSM_blind_test'
 wandb: False
 num_folds: 1
+test_fold: 0
