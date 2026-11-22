@@ -235,17 +235,14 @@ python run.py \
   test ddG
 ```
 
-#### Supervised mutation-effect prediction
-
-Use the five released mCSM fine-tuned checkpoints under `weights/mCSM_RNA_supervised/`.
-
 ```bash
 python run.py \
   --model_config ./config/models/harp_rpa.yml \
-  --data_config ./config/datasets/blindtest.yml \
-  --run_config ./config/runs/test_blindtest_mCSM_harp.yml \
-  test ddG
+  --data_config ./config/datasets/mCSM.yml \
+  --run_config ./config/runs/finetune_mCSM_harp.yml \
+  finetune ddG
 ```
+**Supervised fine-tuning.** Run the command below once per PRA310 Benchmark checkpoint on the mCSM-RNA cross-validation split.
 
 ### MS2-RNA affinity prediction
 
