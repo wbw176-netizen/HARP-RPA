@@ -282,7 +282,7 @@ class LightningRunner(object):
         for k in range(self.run_args.num_folds):
             log_dir = output_dir / f"log_fold_{k}"
 
-            fold_col = f"fold_{k}"
+            fold_col = f"fold_{getattr(self.run_args, 'test_zero_shot_fold', k)}"
             data_module = DataModule(
                 dataset_args=self.dataset_args,
                 **self.dataset_args,
