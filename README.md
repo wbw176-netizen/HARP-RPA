@@ -69,12 +69,12 @@ weights/
 |   |-- HARP-RPA_fold2.ckpt
 |   |-- HARP-RPA_fold3.ckpt
 |   `-- HARP-RPA_fold4.ckpt
-|-- HARP-RPA_PRA310_benchmark_5fold/
-|   |-- HARP-RPA_fold0.ckpt
-|   |-- HARP-RPA_fold1.ckpt
-|   |-- HARP-RPA_fold2.ckpt
-|   |-- HARP-RPA_fold3.ckpt
-|   `-- HARP-RPA_fold4.ckpt
+|-- PRA310_Benchmark/
+|   |-- fold_0/HARP-RPA_PRA310_fold0.ckpt
+|   |-- fold_1/HARP-RPA_PRA310_fold1.ckpt
+|   |-- fold_2/HARP-RPA_PRA310_fold2.ckpt
+|   |-- fold_3/HARP-RPA_PRA310_fold3.ckpt
+|   `-- fold_4/HARP-RPA_PRA310_fold4.ckpt
 |-- PRA201_Benchmark/
 |   |-- fold_0/HARP-RPA_PRA201_fold0.ckpt
 |   |-- fold_1/HARP-RPA_PRA201_fold1.ckpt
@@ -213,7 +213,7 @@ Extract the mCSM-RNA dataset so that the split file is `datasets/mCSM_RNA/splits
 
 #### Zero-shot transfer
 
-Use the five PRA310 Benchmark checkpoints from `weights/HARP-RPA_PRA310_benchmark_5fold/`.
+Use the five PRA310 Benchmark checkpoints from `weights/PRA310_Benchmark/`.
 
 ```bash
 python run.py \
