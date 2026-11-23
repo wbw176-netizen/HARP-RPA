@@ -135,14 +135,11 @@ def load_rinalmo(rinalmo_weights, rinalmo_type):
 
 
 def _select_valid_patch_embeddings(selected, patch_idx, patch_mask):
-    """Ignore padded indices, not index value zero (a valid first residue)."""
     if patch_mask is None:
         raise ValueError('patch_idx requires the residue padding mask from collate')
     if patch_idx.dim() != 1 or patch_mask.shape != patch_idx.shape:
         raise ValueError('patch_idx and patch_mask must be matching one-dimensional tensors')
     valid = patch_mask.to(device=selected.device, dtype=torch.bool)
-    # Collate right-pads all structural fields. Reject holes instead of silently
-    # compacting embeddings out of alignment with coordinates and distances.
     if ((~valid[:-1]) & valid[1:]).any().item():
         raise ValueError('patch_mask must describe right padding only')
     indices = patch_idx.to(device=selected.device)[valid]
@@ -216,7 +213,6 @@ def segment_cat_pad(prot_embedding, prot_chains, prot_mask, na_embedding, na_cha
 
 
 @R.register('harp_rpa')
-@R.register('copra')
 class ESM2RiNALMo(nn.Module):
     def __init__(
         self,
@@ -272,12 +268,6 @@ class ESM2RiNALMo(nn.Module):
         else:
             raise ValueError(f"Unknown pair_encoder_type: {self.pair_encoder_type}")
 
-        self.coformer_type = kwargs.get('coformer_type', 'hetero_pairformer')
-        if self.coformer_type != 'hetero_pairformer':
-            raise ValueError(
-                "Only coformer_type='hetero_pairformer' is supported in this codebase. "
-                "Use the archived baseline project for legacy baselines."
-            )
         pairformer_config = kwargs["hetero_pairformer"]
         self.c_former = HeteroPairformer(**pairformer_config)
 
