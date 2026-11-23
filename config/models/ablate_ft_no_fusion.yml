@@ -23,7 +23,7 @@
     "rinalmo_freeze": false,
     "pair_dim": 64,
     "pair_max_num_atoms": 4,
-    "coformer": {
+    "hetero_pairformer": {
       "embed_dim": 320,
       "pair_dim": 64,
       "num_blocks": 6,
