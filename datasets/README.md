@@ -4,8 +4,9 @@ The dataset archives used by HARP-RPA are hosted on Hugging Face to keep the Git
 
 Download links:
 
-- PRA310: https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/PRA310.zip
-- mCSM-RNA: https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/mCSM_RNA.zip
+- [PRA310](https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/PRA310.zip)
+- [mCSM-RNA](https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/mCSM_RNA.zip)
+- [MS2-RNA](https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/MS2.zip)
 
 ## Download
 
@@ -19,3 +20,8 @@ wget -O datasets/PRA310.zip \
 
 wget -O datasets/mCSM_RNA.zip \
   https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/mCSM_RNA.zip
+
+wget -O datasets/MS2.zip \
+  https://huggingface.co/datasets/bowen12355/HARP-RPA-datasets/resolve/main/datasets/MS2.zip
+
+```
