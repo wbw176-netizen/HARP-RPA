@@ -278,7 +278,8 @@ class ESM2RiNALMo(nn.Module):
                 "Only coformer_type='hetero_pairformer' is supported in this codebase. "
                 "Use the archived baseline project for legacy baselines."
             )
-        self.c_former = HeteroPairformer(**kwargs['coformer'])
+        pairformer_config = kwargs["hetero_pairformer"]
+        self.c_former = HeteroPairformer(**pairformer_config)
 
         self.proj = 0
         if self.use_fusion:
@@ -288,7 +289,7 @@ class ESM2RiNALMo(nn.Module):
             self.proj = 1
             self.project_feat = nn.Linear(esm_feat_size, rinalmo_feat_size)
 
-        self.complex_dim = kwargs['coformer']['embed_dim']
+        self.complex_dim = pairformer_config["embed_dim"]
         self.feat_size = rinalmo_feat_size
         self.proj_cplx = nn.Linear(self.feat_size, self.complex_dim)
         self.z_proj = nn.Linear(pair_dim, self.complex_dim) if pair_dim != self.complex_dim else nn.Identity()
