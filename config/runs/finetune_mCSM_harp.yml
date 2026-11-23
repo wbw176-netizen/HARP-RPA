@@ -5,7 +5,7 @@ output_dir: './outputs/HARP-RPI/mCSM/finetune_fold0'
 gpus:
   - 0
 # Run once per PRA310 Benchmark checkpoint. Change the index in both paths (0–4)
-ckpt: './weights/HARP-RPA_PRA310_benchmark_5fold/HARP-RPA_fold0.ckpt'
+ckpt: './weights/PRA310_Benchmark/fold_0/HARP-RPA_PRA310_fold0.ckpt'
 ckpt_load_mode: model
 reset_pred_head: false
 
