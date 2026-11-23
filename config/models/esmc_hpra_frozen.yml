@@ -8,12 +8,6 @@ model:
   esm_type: 'esmc-600m'
   pooling: token
   output_dim: 1
-
-  # Frozen-LM setting: keep sequence LMs fixed and train the structure/fusion trunk.
-# pooling: token
-# pooling: interface
-# pooling: token_interface   pooling methods for binding infinity
-    
     
   interface_cross_relation_id: 4
   interface_dist_tau: 8.0
