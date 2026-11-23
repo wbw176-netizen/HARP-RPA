@@ -77,10 +77,6 @@ class ModelModule(pl.LightningModule):
         label_std = float(train_labels.std(ddof=0))
         if not np.isfinite(label_std) or label_std < self.label_std_eps:
             label_std = 1.0
-        print(
-            f"[LabelStd] {fold_col}: mean={label_mean:.6f}, std={label_std:.6f}, "
-            f"n_train={len(train_labels)}"
-        )
         return label_mean, label_std
 
     def _standardize_labels(self, y):
