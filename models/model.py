@@ -458,7 +458,7 @@ class ESM2RiNALMo(nn.Module):
             if p.requires_grad and ("lora_A" in n or "lora_B" in n)
         )
         full = total - lora
-        print(f"[DDFT] ESMC 闁告瑯鍨甸鍕磼閸愩劌妫橀柡?-> 闁诡剚妲掗? {total/1e6:.2f}M | LoRA: {lora/1e6:.2f}M | Full FT: {full/1e6:.2f}M")
+        print(f"[DDFT] ESMC trainable: {total/1e6:.2f}M | LoRA: {lora/1e6:.2f}M | Full FT: {full/1e6:.2f}M")
 
     def _print_rinalmo_trainable(self):
         total = sum(p.numel() for p in self.rinalmo.parameters() if p.requires_grad)
@@ -468,7 +468,7 @@ class ESM2RiNALMo(nn.Module):
             if p.requires_grad and ("lora_A" in n or "lora_B" in n)
         )
         full = total - lora
-        print(f"[DDFT] RiNALMo 闁告瑯鍨甸鍕磼閸愩劌妫橀柡?-> 闁诡剚妲掗? {total/1e6:.2f}M | LoRA: {lora/1e6:.2f}M | Full FT: {full/1e6:.2f}M")
+        print(f"[DDFT] RiNALMo trainable: {total/1e6:.2f}M | LoRA: {lora/1e6:.2f}M | Full FT: {full/1e6:.2f}M")
 
     def _pool_global_embedding(self, output, z, key_padding_mask):
         complex_embedding = output + self.z_proj(z).sum(-2) * 0.001
