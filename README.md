@@ -305,6 +305,19 @@ The relation IDs used by the heterogeneous pair encoder are:
 6: protein-token relation
 7: RNA-token relation
 ```
+## Citation
+
+If you use **HARP-RPA**, its benchmark splits/datasets (including MS2-RNA), or the released checkpoints in your research, please cite:
+
+```bibtex
+@article{wang2026harprpa,
+  title   = {HARP-RPA: Interface-Aware HeteroPairFormer for Protein-RNA Binding Affinity Prediction},
+  author  = {Wang, Bowen and contributors},
+  journal = {Bioinformatics},
+  year    = {2026},
+  doi     = {10.1093/bioinformatics/btag859},
+  url     = {[https://doi.org/10.1093/bioinformatics/btag859](https://doi.org/10.1093/bioinformatics/btag859)}
+}
 
 ## License
 
