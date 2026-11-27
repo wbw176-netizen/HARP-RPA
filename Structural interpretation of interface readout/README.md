@@ -1,5 +1,7 @@
 # Structural Interpretation of Interface Readout
 
+![Structural Visualization](./Structural_visualization.png)
+
 Controlled structural-padding sensitivity results (Table S8) for the four displayed cases (`5DET`, `2MJH`, `6SO9`, `5YTV`), evaluated at native lengths ($L_0$) and extended padded lengths ($L \in \{192, 256\}$):
 
 | PDB | $L_0$ | $L$ | $\Delta\widehat{\Delta G}$ (kcal/mol) | Pair $\rho$ | Protein $\rho$ | Learned protein $\rho$ |
