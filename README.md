@@ -1,6 +1,6 @@
 # HARP-RPA
 
-HARP-RPA is a protein-RNA binding affinity prediction framework built around heterogeneous residue-pair modeling. It combines pretrained protein and RNA sequence encoders with explicit protein/RNA/interface pair construction, a relation-aware HeteroPairFormer backbone, and an interface-aware readout for complex-level binding free-energy prediction.HARP-RPA also introduces Dual-Depth Fusion Fine-Tuning (DDFFT), which integrates shallow-layer attention LoRA, deep-layer fine-tuning, and cross-layer representation fusion for efficient adaptation of pretrained biological language models.
+HARP-RPA is a protein-RNA binding affinity prediction framework built around heterogeneous residue-pair modeling. It combines pretrained protein and RNA sequence encoders with explicit protein/RNA/interface pair construction, a relation-aware HeteroPairFormer backbone, and an interface-aware readout for complex-level binding free-energy prediction. HARP-RPA also introduces Dual-Depth Fusion Fine-Tuning (DDFFT), which integrates shallow-layer attention LoRA, deep-layer fine-tuning, and cross-layer representation fusion for efficient adaptation of pretrained biological language models.
 
 ![Overview of the HARP-RPA framework](./assets/teaser.png)
 Source: Bioinformatics (2026).
